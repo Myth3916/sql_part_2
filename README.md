@@ -32,17 +32,14 @@ HAVING COUNT(c.customer_id) > 300;
 ![Результат выполнения запроса](img/rez-vipoln-1.png)
 
 ### Пояснение:
-. Магазин №1 в городе **Lethbridge** обслуживает **326 покупателей** (> 300).
+- Магазин №1 в городе **Lethbridge** обслуживает **326 покупателей** (> 300).
+- Менеджер магазина: Mike Hillyer.
+- Связи таблиц:
+  - `store.manager_staff_id → staff.staff_id` (получаем менеджера)
+  - `store.address_id → address.address_id → city.city_id` (получаем город)
+  - `store.store_id → customer.store_id` (считаем покупателей)
 
-. Менеджер магазина: Mike Hillyer.
-
-.Связи таблиц:
-
-  .`store.manager_staff_id → staff.staff_id` (получаем менеджера)
-  .`store.address_id → address.address_id → city.city_id` (получаем город)
-  .`store.store_id → customer.store_id` (считаем покупателей)
-
-.Фильтрация после агрегации выполнена через `HAVING COUNT(...) > 300`.
+- Фильтрация после агрегации выполнена через `HAVING COUNT(...) > 300`.
 
 
 
