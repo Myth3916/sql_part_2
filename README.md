@@ -74,4 +74,42 @@ WHERE length > (SELECT AVG(length) FROM film);
 - Основной запрос фильтрует фильмы по условию `length > 115.2720` и подсчитывает их количество.
 - Использование скалярного подзапроса в `WHERE` — наиболее эффективный и читаемый способ для данной задачи.
 
+## Задание 3
+
+Получите информацию, за какой месяц была получена наибольшая сумма платежей, и добавьте информацию по количеству аренд за этот месяц.
+
+### Решение
+
+Таблицы: `payment` (платежи) и `rental` (аренды).  
+Ключевые поля: `payment.payment_date`, `payment.amount`, `rental.rental_date`.
+
+**SQL-запрос:**
+```sql
+SELECT 
+    top_month.month,
+    top_month.total_amount,
+    COUNT(r.rental_id) AS rental_count
+FROM (
+    SELECT 
+        DATE_FORMAT(payment_date, '%Y-%m') AS month,
+        SUM(amount) AS total_amount
+    FROM payment
+    GROUP BY DATE_FORMAT(payment_date, '%Y-%m')
+    ORDER BY total_amount DESC
+    LIMIT 1
+) AS top_month
+LEFT JOIN rental r 
+    ON DATE_FORMAT(r.rental_date, '%Y-%m') = top_month.month
+GROUP BY top_month.month, top_month.total_amount;
+```
+
+![Результат выполнения запроса](img/max-summ-plat.png)
+
+### Пояснение:
+- Месяц определяется через `DATE_FORMAT(payment_date, '%Y-%m')`, что даёт формат `ГГГГ-ММ` (например, `2005-07`).
+- Подзапрос группирует платежи по месяцам, суммирует их и выбирает месяц с максимальной суммой через `ORDER BY ... DESC LIMIT 1`.
+- Внешний запрос присоединяет таблицу `rental` по тому же месяцу и считает количество аренд через `COUNT(rental_id)`.
+- В учебной базе Sakila все данные относятся к 2005 году, поэтому максимальный месяц — июль 2005 (`2005-07`).
+
+
 
